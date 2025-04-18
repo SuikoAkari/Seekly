@@ -33,7 +33,7 @@
         
         <a href="/crawler">Index my website!</a>
         <a href="/about">About</a>
-        <a href="/Github">Github</a>
+        <a href="https://github.com/SuikoAkari/Seekly">Github</a>
     </div>
 </div>
 
