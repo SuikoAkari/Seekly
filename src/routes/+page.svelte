@@ -21,8 +21,12 @@
     <title>Seekly</title>
 </svelte:head>
 <div class="center-flex" style="height: 100%; justify-content: center;">
-    <img src="/logo.png" style="width:250px;">
-    <p>Search for what you want on a total of <b>{rsp?.total}</b> urls</p>
+    <div style="display:flex;">
+        <img src="/logo.png" style="width:250px;">
+        <p>Beta</p>
+    </div>
+    
+    <p>Search for what you want on a total of <b>{rsp?.total}</b> urls and <b>{rsp?.totalImages}</b> images</p>
     <div style="display:flex;">
         <input class="input-wbutton big norightborder" bind:value={query} placeholder="Search..." on:keydown={(e) => e.key === 'Enter' && search()} />
         <button class="input-wbutton noleftborder" on:click={search}>Search</button>

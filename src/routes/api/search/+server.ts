@@ -11,7 +11,8 @@ export async function GET({ url }) {
 	const type = url.searchParams.get('t') || 'urls';
 	if(q.length < 1){
 		const total = await Page.countDocuments();
-		return json({total});
+		const totalImages = await Image.countDocuments();
+		return json({total,totalImages});
 	}
 	const page = parseInt(url.searchParams.get('p') || '1');
 	const limit = 20;
