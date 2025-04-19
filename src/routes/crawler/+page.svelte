@@ -17,17 +17,28 @@
     })
 </script>
 <div class="center-flex">
-    <div style="display:flex; align-items: center; gap:6px; margin-top:15px;">
-        <img src="/logo.png" style="width:150px;">
-        <input bind:value={url} placeholder="Link to crawl" on:keydown={(e) => e.key === 'Enter' && addQueue()} />
-        <button on:click={addQueue()}>Add to queue</button>
+    <div class="search-top-bar"style="">
+        <a href="/"><img src="/logo.png" style="width:150px;"></a>
+        <div style="display:flex;">
+            <input class="input-wbutton big norightborder" bind:value={url} placeholder="Link to crawl" on:keydown={(e) => e.key === 'Enter' && addQueue()} />
+            <button class="input-wbutton noleftborder" on:click={addQueue()}>Add to queue</button>
+        </div>
+        
         <a href="/">Go search!</a>
+        |
+        <a href="/about">About</a>
+        |
+        <a href="https://github.com/SuikoAkari/Seekly">Github</a>
     </div>
-    <hr style="width: calc(100% - 2px);">
     <h4>Queue, running and finished crawling process</h4>
+    <p>
+        This search engine is still in early development!<br>
+        Note: Sitemaps aren't yet supported
+    </p>
 {#each rsp?.results as process}
     <div class="crawler-process {process.status}">
-        <p>{process.startUrl}</p>
+        <div style="text-overflow: ellipsis;
+        overflow: hidden;">{process.startUrl}</div>
         <p>Status: {process.status}</p>
         <p>Date: {process.date}</p>
     </div>

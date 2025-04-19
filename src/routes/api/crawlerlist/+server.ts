@@ -8,7 +8,7 @@ export async function GET({ url }) {
 
 	
 	const results = await CrawlProcess.find({})
-		.sort({ date: -1 })
+		.sort({ date: -1 }).limit(25)
 		.lean();
 
 	const end = Date.now();

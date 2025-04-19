@@ -47,16 +47,20 @@
 				font-size:16px;
 				padding:6px;
 				cursor: pointer;
+				background-color: transparent;
 			}
 			.category-button:hover{
 				background-color: #ececf3;
 			}
+			.category-button.selected{
+				background-color: #ececf3;
+			}
 			.pages-list{
 				display: flex;
-				width: calc(100% - 20%);
+				width: -webkit-fill-available;
 				align-items: center;
     			gap: 6px;
-				border-top:1px solid #c5c5c5;
+				border-top:1px solid #f2f2f2;
 				padding-top:6px;
 				padding-bottom:6px;
 				flex-wrap: wrap;
@@ -89,20 +93,39 @@
 			}
 			.center-flex{
 				display:flex; 
+				position:relative;
 				flex-direction: column; 
 				gap:12px; 
 				align-items: center; 
+				width: -webkit-fill-available;
+			}
+			.search-categories{
+				display: flex;
+				min-width:200px;
+				border-right:1px solid #f2f2f2;
+				margin-right:10px;
+				flex-direction: column;
+			}
+			.category-and-query{
+				display: flex;
+				position:relative;
+				width: -webkit-fill-available;
 			}
 			.crawler-process{
-				border:1px solid #999;
+				background-color: rgba(119, 119, 119, 0.144);
+				border-radius:6px;
 				width:400px;
 				padding:4px;
+
 			}
 			.crawler-process.success{
 				background-color: rgba(0, 255, 0, 0.144);
 			}
 			.crawler-process.running{
 				background-color: rgba(255, 208, 0, 0.144);
+			}
+			.crawler-process.stopped{
+				background-color: rgba(255, 17, 0, 0.144);
 			}
 		</style>
 		%sveltekit.head%
