@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { connectDB } from '$lib/db/mongoose';
 import Page from '$lib/models/Page';
-
+import natural from 'natural';
 export async function GET({ url }) {
 	const start = Date.now();
 	await connectDB();
@@ -30,11 +30,53 @@ export async function GET({ url }) {
 		skipNext=total;
 	}
 	const results = await Page.find(searchQuery)
-		.sort({ pageRank: -1 })
+		.sort({ finalScore: -1 })
 		.skip(skip-1)
 		.limit(limit)
 		.lean();
 
+	const tfidf = new natural.TfIdf();
+	results.forEach(p => {
+		const content = `${p.title || ''} ${p.description || ''}`;
+		tfidf.addDocument(content);
+		if(!p.impressions){
+			p.impressions=0;
+		}
+		if(!p.clicks){
+			p.clicks=0;
+		}
+		console.log(p.impressions);
+		p.impressions+=1;
+	});
+	
+	const keywords = q.split(/\s+/).join(' ');
+	tfidf.tfidfs(keywords, (i, score) => {
+		const relevanceScore = Math.min(score / 10, 1);
+		const ctr = results[i].impressions > 0 ? results[i].clicks / results[i].impressions : 0;
+		const httpsBoost = results[i].url.startsWith('https://') ? 0.05 : 0;
+		
+		const finalScore = (
+			relevanceScore * 0.5 +
+			(results[i].pageRank || 0) * 0.3 +
+			ctr * 0.15 +
+			httpsBoost
+		);
+		
+		results[i].relevanceScore = relevanceScore;
+		results[i].finalScore = finalScore;
+	});
+		
+	results.sort((a, b) => b.finalScore - a.finalScore);
+	await Promise.all(results.map(res => {
+		return Page.updateOne(
+			{ url: res.url },
+			{
+				relevanceScore: res.relevanceScore,
+				finalScore: res.finalScore,
+				impressions: res.impressions
+			}
+		);
+	}));
 	const end = Date.now();
 
 	return json({

@@ -58,7 +58,7 @@
             <div style="display:flex; gap:12px;justify-content: space-between;">
                 
                 <div>
-                    <a href={r.url} target="_blank">{r.title || r.url}</a>
+                    <a href="/redirect?uri={r.url}" target="_blank">{r.title || r.url}</a>
                     <p class="small">{r.description || "No description for this page"}</p>
                     <p class="small green">{r.url}</p>
                 </div>
