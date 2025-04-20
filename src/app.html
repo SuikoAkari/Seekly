@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<style>
 			body{
-				font-family: Arial, Helvetica, sans-serif;
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 				display: block;
 				padding:0px;
 				margin:0px;
@@ -19,6 +19,7 @@
 				margin:0px;
 			}
 			a{
+				color:#2371ca;
 				text-decoration: none;
 			}
 			a:hover{
@@ -39,6 +40,7 @@
 				border:1px solid #999;
 				padding:8px;
 				margin:0px;
+				
 			}
 			.input-wbutton.big{
 				width:250px;
@@ -81,6 +83,11 @@
 				border-top-left-radius: 0px;
 				border-bottom-left-radius: 0px;
 				border-left:0px;
+			}
+			input:focus,
+			textarea:focus {
+  				border-color: #4f46e5;
+  				outline: none;
 			}
 			.search-top-bar{
 				border-bottom:1px solid #999;
@@ -134,6 +141,190 @@
 			}
 			.crawler-process.stopped{
 				background-color: rgba(255, 17, 0, 0.144);
+			}
+			[class="modern navbar"]{
+				width:-webkit-fill-available;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap:8px;
+				padding:12px;
+				padding-bottom:0px;
+				border-bottom:1px solid #0000001f;
+			}
+			[class="modern navbar row"]{
+				width:-webkit-fill-available;
+				display: flex;
+				align-items: center;
+				gap:8px;
+				
+			}
+			[class="modern input searchbar"]{
+				position: relative;
+				background-color: #ebebeb;
+				border-radius:32px;
+				border:0px;
+				height:46px;
+				min-width:400px;
+				display: flex;
+				color: #222;
+				justify-content: space-between;
+				transition: all 0.1s linear;
+			}
+			[class="modern page"]{
+				margin-left:160px;
+				margin-top:10px;
+				display: flex;
+			}
+			
+			[class="modern results list"]{
+				max-width:700px;
+				display: flex;
+				flex-direction: column;
+				gap:10px;
+			}
+			.modern.input.searchbar:has(.textbox:focus) {
+				background-color: #ffffff;
+				
+			}
+			.modern.input.searchbar:has(.textbox:focus)::before {
+				opacity: 1;
+			}
+			.modern.input.searchbar::before {
+				content: "";
+				position: absolute;
+				inset: 0;
+				padding: 2px; /* Spessore del bordo */
+				border-radius: 32px;
+				background: linear-gradient(270deg,
+					#ff005d,
+					#ff7c00,
+					#fcd000,
+					#00c853,
+					#00b0ff,
+					#a500ff,
+					#ff005d
+				);
+				box-shadow: 0 0 0 3px rgba(0, 0, 0, 1);
+				background-size: 600% 600%;
+				opacity: 0;
+				pointer-events: none;
+				transition: opacity 0.3s ease;
+				animation: rainbowBorder 6s linear infinite;
+				-webkit-mask: 
+					linear-gradient(#fff 0 0) content-box, 
+					linear-gradient(#fff 0 0);
+				-webkit-mask-composite: xor;
+				mask-composite: exclude;
+				z-index: 0;
+			}
+			@keyframes rainbowBorder {
+				0% { background-position: 0% 50%; }
+				50% { background-position: 100% 50%; }
+				100% { background-position: 0% 50%; }
+			}
+			[class="modern input searchbar button"]{
+				border-radius:32px;
+				border:0px;
+				height:46px;
+				background:transparent;
+				font-weight: bold;
+				padding:0 8px 0px 8px;
+				color: #222;
+				fill: #222;
+				cursor:pointer;
+				display: flex;
+    			align-items: center;
+				transition: fill 0.1s linear, color 0.1s linear;
+			}
+			[class="modern button"],
+			[class="modern button selected"]{
+				font-weight:600;
+				fill:#353535;
+				color:#353535;
+				text-decoration: none;
+				transition:all 0.1s linear;
+				background-color: #ebebeb;
+				padding:8px;
+				border-radius:4px;
+				border:0px;
+				position: relative;
+				cursor:pointer;
+			}
+			[class="modern button"]:disabled{
+				background-color: #cecece;
+			}
+			[class="modern button"]:hover,
+			[class="modern button selected"]:hover{
+				
+				fill:#353535;
+				color:#353535;
+				text-decoration: none;
+				background-color: #ffffff;
+			}
+			[class="modern button"]::before,
+			[class="modern button selected"]::before{
+				content: "";
+				position: absolute;
+				inset: 0;
+				padding: 2px; /* Spessore del bordo */
+				border-radius: 4px;
+				background: linear-gradient(270deg,
+					#ff005d,
+					#ff7c00,
+					#fcd000,
+					#00c853,
+					#00b0ff,
+					#a500ff,
+					#ff005d
+				);
+				box-shadow: 0 0 0 3px rgba(0, 0, 0, 1);
+				background-size: 600% 600%;
+				opacity: 0;
+				pointer-events: none;
+				transition: opacity 0.3s ease;
+				animation: rainbowBorder 6s linear infinite;
+				-webkit-mask: 
+					linear-gradient(#fff 0 0) content-box, 
+					linear-gradient(#fff 0 0);
+				-webkit-mask-composite: xor;
+				mask-composite: exclude;
+				z-index: 0;
+			}
+			.modern.button:hover::before {
+				opacity: 1;
+			}
+			[class="modern button selected"]::before{
+				opacity: 1;
+				padding: 0 0 2px 0;
+				border-radius:3px;
+			}
+			[class="modern button selected"]{
+				background-color: transparent;
+			}
+			[class="modern input searchbar button"]:hover{
+				
+				fill:#00b0ff;
+				color:#00b0ff;
+			}
+			[class="modern input searchbar textbox"]{
+				width:100%;
+				background:transparent;
+				border:0px;
+				font-size:16px;
+			}
+
+			.modern.input.searchbar.divider{
+				width:8px;
+				
+			}
+			footer{
+				background-color: #ebebeb;
+				width:-webkit-fill-available;
+				height:100px;
+				display: flex;
+				align-items: center;
+    			justify-content: center;
 			}
 		</style>
 		%sveltekit.head%

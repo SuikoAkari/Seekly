@@ -54,7 +54,7 @@ export async function GET({ url }) {
     		const httpsBoost = results[i].url.startsWith('https://') ? 0.05 : 0;
     		const textScore = results[i].score ?? 0;
 
-    		// BONUS: Boost per la corrispondenza esatta del dominio
+    		// BONUS: Boost per la corrispondenza esatta del teosto
     		const matchBoost = results[i].url.toLowerCase().includes(q) ? 0.3 : 0;
 
     		// BONUS: Boost per il titolo, verifica che la parola chiave sia presente
@@ -79,6 +79,23 @@ export async function GET({ url }) {
     		// Aggiornamento dei punteggi
     		results[i].relevanceScore = relevanceScore;
     		results[i].finalScore = finalScore;
+			results[i].scores=[
+				{
+					name:"Text Score",value:textScore* 0.35
+				},
+				{
+					name:"Page Rank",value:results[i].pageRank
+				},
+				{
+					name:"Relevance Score",value:relevanceScore* 0.2
+				},
+				{
+					name:"URL Boost",value:urlBoost
+				},
+				{
+					name:"Match Boost",value:matchBoost 
+				}
+			]
 		});
 			
 		results.sort((a, b) => b.finalScore - a.finalScore);

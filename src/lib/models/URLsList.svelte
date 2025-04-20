@@ -5,7 +5,7 @@
     {#each rsp.results as r}
         <div style="display:flex; gap:12px;justify-content: space-between;" key={r}>
             
-            <div>
+            <div style="width: -webkit-fill-available; ">
                 <a href="/redirect?uri={r.url}" target="_blank">{r.title || r.url}</a>
                 <p class="small lines-2">{r.description || "No description for this page"}</p>
                 <p class="small green">{r.url}</p>
