@@ -13,5 +13,6 @@ const pageSchema = new mongoose.Schema({
 	relevanceScore: { type: Number, default: 0 },
 	finalScore: { type: Number, default: 0 } 
 });
+pageSchema.index({ title: 'text', description: 'text', url: 'text' }, { weights: { title: 15, description: 10, url: 1 } });
 
 export default mongoose.models.Page || mongoose.model('Page', pageSchema);

@@ -7,7 +7,7 @@
             
             <div>
                 <a href="/redirect?uri={r.url}" target="_blank">{r.title || r.url}</a>
-                <p class="small">{r.description || "No description for this page"}</p>
+                <p class="small lines-2">{r.description || "No description for this page"}</p>
                 <p class="small green">{r.url}</p>
             </div>
             <!--<img style="width:100px;" src={r.image}>-->

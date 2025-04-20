@@ -1,7 +1,7 @@
 <script>
     import ImageList from "$lib/models/ImageList.svelte";
     import UrLsList from "$lib/models/URLsList.svelte";
-import { onMount } from "svelte";
+    import { onMount } from "svelte";
 
 	let query = '';
 	let rsp = {};
@@ -18,6 +18,30 @@ import { onMount } from "svelte";
             name: "Images"
         }
     ]
+    function getVisiblePages() {
+        const visiblePages = [];
+        const maxVisible = 10;
+        const halfRange = Math.floor(maxVisible / 2);
+        let totalPages = rsp?.pages || 0;
+        let start = Math.max(1, page - halfRange);  // Inizia 5 pagine prima della pagina attuale
+        let end = Math.min(totalPages, page + halfRange);  // Termina 5 pagine dopo la pagina attuale
+
+         // Se ci sono meno di 10 pagine intorno alla pagina attuale, aggiusta i limiti
+        if (end - start < maxVisible) {
+            if (start === 1) {
+                end = Math.min(totalPages, start + maxVisible - 1);
+            } else if (end === totalPages) {
+                start = Math.max(1, end - maxVisible + 1);
+            }
+        }
+
+        // Aggiungi tutte le pagine visibili all'array
+        for (let i = start; i <= end; i++) {
+            visiblePages.push(i);
+        }
+
+        return visiblePages;
+    }
 	async function search(page=null) {
         const url = new URL(window.location);
         url.searchParams.set('q', query );
@@ -85,13 +109,15 @@ import { onMount } from "svelte";
            
             <nav class="pages-list">
                 Pages
-                {#each Array(rsp.pages) as _, i}
+                <button class="button-page" on:click={() => changePage(1)}>First</button>
+                {#each getVisiblePages() as pageNum}
                     <button class="button-page"
-                        on:click={() => changePage(i + 1)}
-                        disabled={page === i + 1}>
-                        {i + 1}
+                        on:click={() => changePage(pageNum)}
+                        disabled={page === pageNum}>
+                        {pageNum}
                     </button>
                 {/each}
+                <button class="button-page" on:click={() => changePage(rsp?.pages)}>Last</button>
             </nav>
             {/if}
         </div>

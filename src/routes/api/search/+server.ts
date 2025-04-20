@@ -20,23 +20,18 @@ export async function GET({ url }) {
 	
 	var skipNext = (page) * limit;
 	if(type=="urls"){
-		const searchQuery = {
-			$or: [
-				{ description: { $regex: q, $options: 'i' } },
-				{ title: { $regex: q, $options: 'i' } },
-				{ url: { $regex: q, $options: 'i' } }
-			]
-		};
-	
-		const total = await Page.countDocuments(searchQuery);
+		const searchQuery = { $text: { $search: q } };
+		await Page.collection.getIndexes().then(console.log);
+		const total = await Page.countDocuments(searchQuery, { score: { $meta: "textScore" } });
 		if(skipNext > total){
 			skipNext=total;
 		}
-		const results = await Page.find(searchQuery)
+		const results = await Page.find(searchQuery, { score: { $meta: "textScore" } })
 			.sort({ finalScore: -1 })
+			//.sort({ score: { $meta: "textScore" },finalScore: -1 })
 			.skip(skip-1)
 			.limit(limit)
-			.select("url title description image date pageRank clicks impressions relevanceScore finalScore")
+			.select("url title description image date pageRank clicks impressions relevanceScore finalScore score")
 			.lean();
 	
 		const tfidf = new natural.TfIdf();
@@ -52,34 +47,54 @@ export async function GET({ url }) {
 			p.impressions+=1;
 		});
 		
-		const keywords = q.split(/\s+/).join(' ');
-		tfidf.tfidfs(keywords, (i, score) => {
-			const relevanceScore = Math.min(score / 10, 1);
-			const ctr = results[i].impressions > 0 ? results[i].clicks / results[i].impressions : 0;
-			const httpsBoost = results[i].url.startsWith('https://') ? 0.05 : 0;
-			
-			const finalScore = (
-				relevanceScore * 0.5 +
-				(results[i].pageRank || 0) * 0.3 +
-				ctr * 0.15 +
-				httpsBoost
-			);
-			
-			results[i].relevanceScore = relevanceScore;
-			results[i].finalScore = finalScore;
+		const keywords = q.split(/\s+/).map(keyword => keyword.toLowerCase()).join(' ');
+		tfidf.tfidfs(keywords, (i, tfidfScore) => {
+    		const relevanceScore = Math.min(tfidfScore / 10, 1);
+    		const ctr = results[i].impressions > 0 ? results[i].clicks / results[i].impressions : 0;
+    		const httpsBoost = results[i].url.startsWith('https://') ? 0.05 : 0;
+    		const textScore = results[i].score ?? 0;
+
+    		// BONUS: Boost per la corrispondenza esatta del dominio
+    		const matchBoost = results[i].url.toLowerCase().includes(q) ? 0.3 : 0;
+
+    		// BONUS: Boost per il titolo, verifica che la parola chiave sia presente
+    		const titleBoost = results[i].title?.toLowerCase().includes(keywords) ? 0.2 : 0;
+
+    		// BONUS: Boost per URL, verifica che la parola chiave sia presente nell'URL
+    		const urlBoost = results[i].url?.toLowerCase().includes(keywords) ? 0.1 : 0;
+
+
+    		// Calcolo finale del punteggio
+    		const finalScore = (
+        		textScore * 0.35 +           // Peso per il punteggio di textScore
+        		relevanceScore * 0.2 +       // Peso per il punteggio di rilevanza (TF-IDF)
+        		(results[i].pageRank || 0) * 0.2 +  // Peso per il pageRank
+        		ctr * 0.1 +                  // Peso per il CTR (Click-Through Rate)
+        		httpsBoost +                 // Boost per l'URL che inizia con 'https://'
+        		titleBoost +                 // Boost per la corrispondenza nel titolo
+        		urlBoost +                   // Boost per la corrispondenza nell'URL
+        		matchBoost               // Boost per il match della query 
+    		);
+
+    		// Aggiornamento dei punteggi
+    		results[i].relevanceScore = relevanceScore;
+    		results[i].finalScore = finalScore;
 		});
 			
 		results.sort((a, b) => b.finalScore - a.finalScore);
-		await Promise.all(results.map(res => {
-			return Page.updateOne(
-				{ url: res.url },
-				{
-					relevanceScore: res.relevanceScore,
-					finalScore: res.finalScore,
-					impressions: res.impressions
+		const bulkOps = results.map(res => ({
+			updateOne: {
+				filter: { url: res.url },
+				update: {
+					$set: {
+						relevanceScore: res.relevanceScore,
+						finalScore: res.finalScore
+					},
+					$inc: { impressions: 1 }
 				}
-			);
+			}
 		}));
+		await Page.bulkWrite(bulkOps);
 		const end = Date.now();
 	
 		return json({
@@ -94,7 +109,7 @@ export async function GET({ url }) {
 		});
 	}else if(type=="images"){
 		const regex = new RegExp(q, 'i');
-		const searchQuery = {
+		/*const searchQuery = {
 			$or: [
 				{ src: regex },
 				{ alt: regex },
@@ -102,8 +117,8 @@ export async function GET({ url }) {
 				{ class: regex },
 				{ keywords: regex }
 			]
-		};
-		
+		};*/
+		const searchQuery = { $text: { $search: q } };
 		const total = await Image.countDocuments(searchQuery);
 		if(skipNext > total){
 			skipNext=total;

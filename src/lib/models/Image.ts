@@ -9,5 +9,5 @@ const imageSchema = new mongoose.Schema({
 	keywords: [String],
 	timestamp: { type: Date, default: Date.now }
 });
-
+imageSchema.index({ src: 'text', alt: 'text', title: 'text', class: 'text', keywords: 'text' });
 export default mongoose.models.Image || mongoose.model('Image', imageSchema);
