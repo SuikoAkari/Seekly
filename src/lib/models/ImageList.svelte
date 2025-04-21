@@ -14,8 +14,8 @@
 <div style="display: flex; gap:12px; width: -webkit-fill-available; flex-wrap: wrap;">
     {#each rsp.results as r}
         <a class="modern results image div" key={r}>
-            <img src="{r.src}" height="120px" style="background-color: #222; border-radius:12px;">
-            <p class="small">{splitLink(r.source)}</p>
+            <img src="{r.src}" style="background-color: #000; border-radius:12px;">
+            <p class="small" style="max-width: 200px; overflow:hidden;">{splitLink(r.source)}</p>
         </a>
     {/each}
 </div>

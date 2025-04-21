@@ -26,6 +26,7 @@
 				--searchbar-hovered: #edfbff;
 				--border-transparent-color:#0000001f;
 				--modern-green:green;
+				--paragraph-color: rgb(98 107 127);
 			}
 			@media (prefers-color-scheme: dark) {
 				:root{
@@ -39,7 +40,37 @@
 					--searchbar-hovered: #374150;
 					--border-transparent-color:#ffffff1f;
 					--modern-green:rgb(57, 192, 125);
+					--paragraph-color: rgb(218, 223, 231);
 				}
+			}
+			::-webkit-scrollbar {
+  				width: 12px;
+  				height: 12px;
+			}
+			::-webkit-scrollbar-track {
+  				background: var(--body-bkg);
+  				border-radius: 10px;
+			}
+			::-webkit-scrollbar-thumb {
+  				background: var(--scrollbar-thumb, #888);
+  				border-radius: 10px;
+  				border: 3px solid var(--body-bkg);
+			}
+			[class="modern home ad"]{
+				background: linear-gradient(270deg,
+					#ff005d,
+					#a500ff,
+					#00b0ff,
+					#a500ff,
+					#ff005d
+				);
+				color: #fff;
+				cursor:pointer;
+				background-size: 600% 600%;
+				padding:8px;
+				margin-top:30px;
+				border-radius:32px;
+				animation: rainbowBorder 6s linear infinite;
 			}
 			html{
 				height:100%;
@@ -171,9 +202,12 @@
 			.crawler-process.stopped{
 				background-color: rgba(255, 17, 0, 0.144);
 			}
-			[class="modern navbar"]{
+			[class="modern navbar"],
+			[class="modern navbar scrolled"]{
 				background-color: var(--body-bkg);
 				z-index:5;
+				position:fixed;
+				top:0px;
 				width:-webkit-fill-available;
 				display: flex;
 				flex-direction: column;
@@ -182,15 +216,46 @@
 				padding:12px;
 				padding-top:20px;
 				padding-bottom:0px;
-				border-bottom:1px solid var(--border-transparent-color);
+				box-shadow: #0000004f 0px 0px 0px 0px;
+				transition: all 0.1s linear;
 			}
-			[class="modern navbar row"]{
+			[class="modern navbar scrolled"]{
+				box-shadow: #0000004f 1px 1px 12px 1px;
+			}
+			[class="modern navbar empty-replacement"]{
+				height:65px;
+			}
+			[class="modern navbar row"],
+			[class="modern navbar row special"]{
 				width:-webkit-fill-available;
 				display: flex;
 				align-items: center;
 				gap:8px;
 				
 			}
+			[class="modern navbar buttons"]{
+				width: -webkit-fill-available; 
+				display:flex; 
+				gap: 8px; 
+				flex-direction: row-reverse;
+			}
+			@media(max-width:980px){
+				[class="modern navbar row special"]{
+					width:-webkit-fill-available;
+					display: flex;
+					align-items: center;
+					gap:8px;
+					flex-direction: column;
+				}
+				[class="modern navbar buttons"]{
+					width: auto; 
+
+					display:none;
+					gap: 8px; 
+					flex-direction: row-reverse;
+				}
+			}
+			
 			[class="modern input searchbar"]{
 				position: relative;
 				background-color: var(--button-bkg);
@@ -212,7 +277,12 @@
 				margin-top:10px;
 				display: flex;
 			}
-			
+			[class="modern panel"]{
+				border: 1px solid var(--border-transparent-color);
+				border-radius:12px;
+				padding:8px;
+				width:300px;
+			}
 			[class="modern results list"]{
 				
 				width:700px;
@@ -220,12 +290,36 @@
 				flex-direction: column;
 				gap:10px;
 			}
+			@media(max-width: 980px){
+				[class="modern page"]{
+					flex-direction: column;
+					margin-left:0px;
+					align-items:center;
+				}
+				[class="modern panel"]{
+					width:-webkit-fill-available;
+					
+				}
+				[class="modern results list"]{
+				
+					width:auto;
+					margin-left:10px;
+				}
+			}
+			
 			[class="modern results image div"]{
 				display: flex;
 				flex-direction: column;
 				gap:10px;
 				cursor: pointer;
 			}
+
+			.modern.results.image.div img {
+        		width: 200px;
+				aspect-ratio:16/10;
+        		
+        		object-fit: contain;
+    		}
 			.modern.input.searchbar:has(.textbox:focus) {
 				background-color: var(--button-bkg-hover);
 				
@@ -295,6 +389,9 @@
 				border:0px;
 				position: relative;
 				cursor:pointer;
+				display: flex;
+    			align-items: center;
+    			gap: 6px;
 			}
 			[class="modern button"]:disabled{
 				background-color: var(--button-bkg-disabled);
@@ -317,8 +414,6 @@
 				background: linear-gradient(270deg,
 					#ff005d,
 					#a500ff,
-					#00b0ff,
-					#00c853,
 					#00b0ff,
 					#a500ff,
 					#ff005d
@@ -397,6 +492,7 @@
 				font-weight: 500;
 				padding-bottom: 10px;
 			}
+			
 			footer{
 				background-color: var(--button-bkg);
 				width:-webkit-fill-available;

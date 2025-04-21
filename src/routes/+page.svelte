@@ -30,7 +30,7 @@
 </svelte:head>
 <div class="center-flex" style="height: 100%; justify-content: center;">
     <img src="/logo.png" style="width:250px;">
-    <p>Search for what you want on a total of <b>{rsp?.total}</b> urls and <b>{rsp?.totalImages}</b> images</p>
+    <!--<p>Search for what you want on a total of <b>{rsp?.total}</b> urls and <b>{rsp?.totalImages}</b> images</p>-->
     <div class="modern input searchbar">
         <div class="modern input searchbar divider">
 
@@ -55,6 +55,9 @@
 
         </div>
     </div>
+    <a href="https://github.com/SuikoAkari/Seekly" class="modern home ad">
+        <p>Check now the latest updates of Seekly on GitHub!</p>
+    </a>
     <div style="margin-top:10px; display:flex; gap:10px;">
         <a href="/crawler" class="modern button">Index a Website</a>
         <a href="/about" class="modern button">About</a>
