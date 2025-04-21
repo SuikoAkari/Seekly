@@ -11,7 +11,14 @@
         goto(`/search?${params.toString()}`);
     }
     async function totalPages(){
-        const res = await fetch(`/api/search`);
+        const res = await fetch(`/api/search`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+                body: JSON.stringify({
+            })
+        });
 		rsp = await res.json();
     }
     onMount(()=>{
