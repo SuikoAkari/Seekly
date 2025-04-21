@@ -11,7 +11,11 @@ const pageSchema = new mongoose.Schema({
 	clicks: { type: Number, default: 0 },
 	impressions: { type: Number, default: 0 },
 	relevanceScore: { type: Number, default: 0 },
-	finalScore: { type: Number, default: 0 } 
+	finalScore: { type: Number, default: 0 } ,
+	categories: [{
+		name: String,
+		url: String
+	}]
 });
 pageSchema.index({ title: 'text', description: 'text', url: 'text' }, { weights: { title: 15, description: 10, url: 1 } });
 

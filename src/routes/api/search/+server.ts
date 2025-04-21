@@ -31,7 +31,7 @@ export async function GET({ url }) {
 			//.sort({ score: { $meta: "textScore" },finalScore: -1 })
 			.skip(skip-1)
 			.limit(limit)
-			.select("url title description image date pageRank clicks impressions relevanceScore finalScore score")
+			.select("url categories title description image date pageRank clicks impressions relevanceScore finalScore score")
 			.lean();
 	
 		const tfidf = new natural.TfIdf();
