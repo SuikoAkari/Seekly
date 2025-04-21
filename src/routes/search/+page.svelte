@@ -2,6 +2,7 @@
     import ImageList from "$lib/models/ImageList.svelte";
     import UrLsList from "$lib/models/URLsList.svelte";
     import { goto } from '$app/navigation';
+    import { onMount } from "svelte";
 
     let tabs = [
         {
@@ -64,6 +65,8 @@
     export let data;
     var {curQuery} = data;
 	$: ({ rsp, query, page, curTab } = data);
+
+
 </script>
 <svelte:head>
     <title>{query} - Search with Seekly (Beta!)</title>
@@ -96,18 +99,22 @@
     
             </div>
         </div>
-        <a href="/crawler" class="modern button">Index a Website</a>
-        <a href="/about" class="modern button">About</a>
-        <a href="https://github.com/SuikoAkari/Seekly" class="modern button">Github</a>
+        <div style="width: -webkit-fill-available; display:flex; gap: 8px; flex-direction: row-reverse;">
+            <a href="/crawler" class="modern button">Index a Website</a>
+            <a href="/about" class="modern button">About</a>
+            <a href="https://github.com/SuikoAkari/Seekly" class="modern button">Github</a>
+        </div>
+
     </div>
     <div class="modern navbar row" style="margin-left:160px; margin-top:20px;">
         {#each tabs as tab}
             <button class="modern button{curTab==tab.value ? " selected" : ""}" disabled={false} on:click={()=>switchTab(tab.value)}>{tab.name}</button>
         {/each}
+        <button class="modern button" disabled={true} on:click={()=>{}}>Filters</button>
     </div>
 </div>
 <div class="modern page">
-    <div class="modern results list">
+    <div class="modern results list" style="{rsp?.type =="images" ? "width: -webkit-fill-available;":""}">
         <div style="color: #888;">Seekly results <b>{rsp?.current?.from}-{rsp?.current?.to}</b> of about {rsp?.total} for <b>{rsp?.query}</b> took <b>{rsp?.durationMs/1000}</b> seconds</div>
         {#if rsp?.type=="urls"}
         <UrLsList rsp={rsp} ></UrLsList>
@@ -116,7 +123,6 @@
         {/if}
 
         <nav class="pages-list">
-            Pages
             <button class="modern button" on:click={() => changePage(1)}>First</button>
             {#each getVisiblePages() as pageNum}
                 <button class="modern button"

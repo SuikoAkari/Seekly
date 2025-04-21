@@ -3,24 +3,37 @@ import { connectDB } from '$lib/db/mongoose';
 import Page from '$lib/models/Page';
 import Image from '$lib/models/Image';
 import natural from 'natural';
-export async function GET({ url }) {
-	const start = Date.now();
-	await connectDB();
+export async function POST({ request }) {
+    const start = Date.now();
+    await connectDB();
 
-	const q = url.searchParams.get('q') || '';
-	const type = url.searchParams.get('t') || 'urls';
+    // Leggi il corpo della richiesta come JSON
+    const body = await request.json();
+    
+    // Estrai i parametri dal corpo
+    const q = body.q || '';
+    const type = body.t || 'urls';
+    const filters = body.f || {};
+
 	if(q.length < 1){
 		const total = await Page.countDocuments();
 		const totalImages = await Image.countDocuments();
 		return json({total,totalImages});
 	}
-	const page = parseInt(url.searchParams.get('p') || '1');
+	const page = parseInt(body.p || '1');
 	const limit = 20;
 	const skip = 1+(page - 1) * limit;
 	
 	var skipNext = (page) * limit;
 	if(type=="urls"){
-		const searchQuery = { $text: { $search: q } };
+		var searchQuery = { 
+			$text: { 
+			  $search: `${q}`
+			} 
+		};
+		if(filters?.match){
+			
+		}
 		await Page.collection.getIndexes().then(console.log);
 		const total = await Page.countDocuments(searchQuery, { score: { $meta: "textScore" } });
 		if(skipNext > total){

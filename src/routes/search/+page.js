@@ -4,7 +4,17 @@ export async function load({ fetch, url }) {
 	const page = url.searchParams.get('p') || '1';
 	const curTab = url.searchParams.get('t') || 'urls';
 
-	const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&p=${page}&t=${curTab}`);
+	const res = await fetch('/api/search', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            q: query,
+            p: page,
+            t: curTab
+        })
+    });
 	const rsp = await res.json();
 
 	return {

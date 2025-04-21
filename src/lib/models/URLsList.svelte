@@ -1,22 +1,35 @@
 <script>
     export let rsp;
     function getFaviconUrl(domain) {
-        // Rimuovi protocollo e path se presente
         const cleanDomain = domain.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
         return `https://${cleanDomain}/favicon.ico`;
+    }
+    function splitLink(url) {
+        let cleanUrl = url.replace(/^(https?:\/\/)?(www\.)?/i, '');
+        const parts = cleanUrl.split(/\/|\?|\#/).filter(part => part.length > 0);
+
+        return parts.join(' › ');
     }
 </script>
 <div style="display: flex; gap:12px; flex-direction: column; width: -webkit-fill-available; padding-right:10%;">
     {#each rsp.results as r}
-        <div style="display:flex; gap:12px;justify-content: space-between;" key={r}>
-            <div class="modern url icon">
-                <img style="width: 28px; height:28px; border-radius:25px;" src={getFaviconUrl(r.url)}>
+        <div style="display:flex; gap:5px; flex-direction: column; ">
+            <div style="display:flex; gap:8px;">
+                <div class="modern url icon">
+                    <img style="width: 28px; height:28px; border-radius:25px;" src={getFaviconUrl(r.url)}>
+                </div>
+                <div>
+                    <p>{r.url.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0]}</p>
+                    <p class="small green">{splitLink(r.url)}</p>
+                </div>
+                
             </div>
+            
            
-            <div style="width: -webkit-fill-available; ">
-                <a href="/redirect?uri={r.url}" target="_blank">{r.title || r.url}</a>
-                <p class="small lines-2">{r.description || "No description for this page"}</p>
-                <p class="small green">{r.url}</p>
+            <div style="width: -webkit-fill-available; display:flex; flex-direction:column;">
+                <a href="/redirect?uri={r.url}" target="_blank" class="modern url text">{r.title || r.url}</a>
+                <p class="small lines-2" style="color: rgb(218, 223, 231);">{r.description || "No description for this page"}</p>
+                
                 {#if r?.categories?.length>0}
                 <div class="modern url-div categories">
                     {#each r.categories as c}
