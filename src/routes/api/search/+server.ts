@@ -3,6 +3,13 @@ import { connectDB } from '$lib/db/mongoose';
 import Page from '$lib/models/Page';
 import Image from '$lib/models/Image';
 import natural from 'natural';
+import { pipeline } from '@xenova/transformers';
+async function askToAI(question) {
+	
+    return "";
+}
+
+
 export async function POST({ request }) {
     const start = Date.now();
     await connectDB();
@@ -25,6 +32,20 @@ export async function POST({ request }) {
 	const skip = 1+(page - 1) * limit;
 	
 	var skipNext = (page) * limit;
+	if(type=="ai"){
+		const text = await askToAI(q);
+		const end = Date.now();
+		return json({
+			type,
+			results: text,
+			total:1,
+			current:{from:skip,to:skipNext},
+			durationMs: end - start,
+			query: q,
+			page,
+			pages: Math.ceil(1 / limit)
+		});
+	}
 	if(type=="urls"){
 		var searchQuery = { 
 			$text: { 

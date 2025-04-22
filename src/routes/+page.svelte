@@ -30,7 +30,7 @@
 </svelte:head>
 <div class="center-flex" style="height: 100%; justify-content: center;">
     <img src="/logo.png" style="width:250px;">
-    <!--<p>Search for what you want on a total of <b>{rsp?.total}</b> urls and <b>{rsp?.totalImages}</b> images</p>-->
+    <p>Search for what you want on a total of <b>{rsp?.total}</b> urls and <b>{rsp?.totalImages}</b> images</p>
     <div class="modern input searchbar">
         <div class="modern input searchbar divider">
 

@@ -15,7 +15,8 @@ const pageSchema = new mongoose.Schema({
 	categories: [{
 		name: String,
 		url: String
-	}]
+	}],
+	embedding: [Number],
 });
 pageSchema.index({ title: 'text', description: 'text', url: 'text' }, { weights: { title: 15, description: 10, url: 1 } });
 

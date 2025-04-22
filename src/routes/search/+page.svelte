@@ -42,6 +42,11 @@
                 <path d="M10 12H12V13H10V12Z" />
                 </svg>`,
             disabled: true,
+        },
+        {
+            value:"ai",
+            name:"AI Answer",
+            disabled: true,
         }
     ]
     function getVisiblePages() {
@@ -184,13 +189,17 @@
 </div>
 <div class="modern page">
     <div class="modern results list" style="{rsp?.type =="images" ? "width: -webkit-fill-available;":""}">
-        <div style="color: #888;">Seekly results <b>{rsp?.current?.from}-{rsp?.current?.to}</b> of about {rsp?.total} for <b>{rsp?.query}</b> took <b>{rsp?.durationMs/1000}</b> seconds</div>
+        
         {#if rsp?.type=="urls"}
+        <div style="color: var(--button-text-color);">Seekly results <b>{rsp?.current?.from}-{rsp?.current?.to}</b> of about {rsp?.total} for <b>{rsp?.query}</b> took <b>{rsp?.durationMs/1000}</b> seconds</div>
         <UrLsList rsp={rsp} ></UrLsList>
-        {:else}
+        {:else if rsp?.type=="images"}
+        <div style="color: var(--button-text-color);">Seekly results <b>{rsp?.current?.from}-{rsp?.current?.to}</b> of about {rsp?.total} for <b>{rsp?.query}</b> took <b>{rsp?.durationMs/1000}</b> seconds</div>
         <ImageList rsp={rsp}></ImageList>
+        {:else}
+        <p style="color: var(--button-text-color);">{rsp.results}</p>
         {/if}
-
+        {#if rsp.type!="ai"}
         <nav class="pages-list">
             <button class="modern button" on:click={() => changePage(1)}>First</button>
             {#each getVisiblePages() as pageNum}
@@ -202,6 +211,7 @@
             {/each}
             <button class="modern button" on:click={() => changePage(rsp?.pages)}>Last</button>
         </nav>
+        {/if}
     </div>
     {#if rsp?.type=="urls"}
     <div style="display: flex; gap:8px; flex-direction: column; margin-bottom:10px; ">

@@ -1,0 +1,90 @@
+import { json } from '@sveltejs/kit';
+import { connectDB } from '$lib/db/mongoose';
+import Page from '$lib/models/Page';
+import Image from '$lib/models/Image';
+import { cosineSimilarity } from '$lib/utils/similarity';
+import { getLocalEmbedding } from '$lib/ai/embedding';
+import { updateEmbeddingAll } from '$lib/ai/updatePages';
+import { pipeline } from '@xenova/transformers';
+export async function POST({ request }) {
+	//await updateEmbeddingAll();
+	const start = Date.now();
+	await connectDB();
+	const body = await request.json();
+
+	const q = body.q || '';
+	const type = body.t || 'urls';
+	const filters = body.f || {};
+	const page = parseInt(body.p || '1');
+	const limit = 20;
+	const skip = (page - 1) * limit;
+
+	if (q.length < 1) {
+		const total = await Page.countDocuments();
+		const totalImages = await Image.countDocuments();
+		return json({ total, totalImages });
+	}
+
+	const embedding = await getLocalEmbedding(q);
+    var searchQuery = { 
+        $text: { 
+            $search: `${q}`
+        },
+        embedding: { 
+            $exists: true 
+        }
+    };
+    
+    const docs = await Page.find(searchQuery).select("url categories title description image date pageRank clicks impressions relevanceScore embedding")
+    .lean();
+
+	const scored = docs.map(doc => {
+		const textScore = cosineSimilarity(embedding, doc.embedding);
+        var ctr = doc?.impressions > 0 ? doc?.clicks / doc?.impressions : 0;
+        const httpsBoost = doc.url.startsWith('https://') ? 0.05 : 0;
+        if(isNaN(ctr)){
+            ctr=0;
+        }
+        const finalScore = (
+            textScore * 5 +           // Peso per il punteggio di textScore     // Peso per il punteggio di rilevanza (TF-IDF)
+            (doc.pageRank || 0) * 0.25 +  // Peso per il pageRank
+            ctr * 0.20 +                  // Peso per il CTR (Click-Through Rate)
+            httpsBoost                // Boost per l'URL che inizia con 'https://'
+        );
+        console.log(textScore,ctr,httpsBoost);
+        console.log(doc.url,finalScore);
+		return { ...doc, finalScore, score: textScore };
+	});
+    
+	const threshold = 0.65;
+	const filtered = scored.filter(doc => doc.score > threshold);
+    
+
+	filtered.sort((a, b) => b.finalScore - a.finalScore);
+
+	const paginated = filtered.slice(skip, skip + limit);
+
+	const end = Date.now();
+    const bulkOps = paginated.map(res => ({
+        updateOne: {
+            filter: { url: res?.url },
+            update: {
+                $set: {
+                    finalScore: res.finalScore
+                },
+                $inc: { impressions: 1 }
+            }
+        }
+    }));
+    await Page.bulkWrite(bulkOps);
+	return json({
+		type,
+		results: paginated,
+		total: filtered.length, // 👈 totale solo dei documenti vicini!
+		current: { from: skip + 1, to: skip + paginated.length },
+		durationMs: end - start,
+		query: q,
+		page,
+		pages: Math.ceil(filtered.length / limit),
+	});
+}
